@@ -17,3 +17,26 @@ echo "ExecStop=/bin/kill -s TERM $MAINPID" >>  /lib/systemd/system/nginx.service
 echo " " >>  /lib/systemd/system/nginx.service
 echo "[Install]" >>  /lib/systemd/system/nginx.service
 echo "WantedBy=multi-user.target" >>  /lib/systemd/system/nginx.service
+
+-------------
+
+
+pagespeed on;
+pagespeed RespectVary on;
+pagespeed HonorCsp on;
+pagespeed DisableRewriteOnNoTransform off;
+pagespeed LowercaseHtmlNames on;
+pagespeed XHeaderValue "VemDelivery modified ngx_pagespeed";
+
+
+
+# Needs to exist and be writable by nginx.  Use tmpfs for best performance.
+pagespeed FileCachePath /var/ngx_pagespeed_cache;
+
+# Ensure requests for pagespeed optimized resources go to the pagespeed handler
+# and no extraneous headers get set.
+location ~ "\.pagespeed\.([a-z]\.)?[a-z]{2}\.[^.]{10}\.[^.]+" {
+  add_header "" "";
+}
+location ~ "^/pagespeed_static/" { }
+location ~ "^/ngx_pagespeed_beacon$" { }
